@@ -1,0 +1,90 @@
+.header-img {
+  background-image: url('../assets/blackandwhite.jpg');
+  margin: auto;
+  background-size:180px;
+  height:275px;
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+}
+.navbar {
+  background-color: #1C2833 !important;
+  font-family: calibri, sans-serif;
+  color: white !important;
+  font-size: 14px;
+  text-decoration:none;
+  opacity:0.9;
+}
+
+a.nav-link, a.navbar-brand {
+  color: white !important;
+}
+
+.searchbox{
+    display:inline-flex;
+    padding:14px 20px 14px 42px;
+  border-radius: 4px 4px 4px 4px #ddd;
+  margin-top: 5px;
+  outline: none;
+  width:180px;
+  border:0.2em solid;
+  -webkit-background-size:width 0.7s ease-in-out;
+  -moz-transition: width 0.7s ease-in-out;
+  -ms-transition: width 0.s ease-in-out;
+  -0-transition: width 0.7s ease-in-out;
+  transition: width 0.7s ease-in-out;
+}
+.input:focus{
+    width: 500px !important;
+}
+.searchbox[type=text] h3{
+    font-size: 18px;
+    margin-top: 120px;
+    font-family: century gothic;
+}
+
+.center {
+  text-align: center;
+}
+
+.search-container {
+  text-align: center !important;
+}
+
+.cont {
+  width: 100%;
+  text-align: center;
+}
+
+.width-transition {
+  text-align: center !important;
+  width: 75%;
+  align-content: center;
+  align-items: center;
+  align-self: center;
+}
+
+.cx-input {
+  transition: width 0.5s ease-in-out;
+  width: 65% !important;
+}
+.cx-input:focus {
+  width: 100% !important;
+}
+.cx-col {
+  text-align: center;
+  float: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-left: 200px;
+}
+.map-col {
+  padding: 0px;
+}
+.map {
+  width: 100vw;
+  height: 50vh;
+  max-height: none;
+}
