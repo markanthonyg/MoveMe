@@ -2,6 +2,12 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import * as leaflet from 'leaflet';
 import * as _ from 'lodash';
+import {FormControl} from '@angular/forms';
+import {Observable}  from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/throttleTime';
+import 'rxjs/add/observable/fromEvent';
 // import * as google from 'google';
 // import * as gMaps from 'google-maps';
 
@@ -13,12 +19,19 @@ import * as _ from 'lodash';
 export class AppComponent {
 
   map: any;
-  map
-
-  constructor(private http: HttpClient) { }
-
-  cityInput = 'Phoenix';
+  modelChanged: Subject<string> = new Subject<string>();
+  cityInput = '';
   googleApiKey: string = 'AIzaSyDIIfYxrJOeNnaMGdIXSrvFlIFemyl81Ww';
+
+  constructor(private http: HttpClient) {
+    this.modelChanged
+      .debounceTime(700) // wait 300ms after the last event before emitting last event
+      //.distinctUntilChanged() // only emit if value is different from previous value
+      .subscribe(cityInput => {
+        this.cityInput = cityInput;
+        this.getCityCoordinates();
+    });
+  }
 
   ngOnInit() {
     this.map = leaflet.map('map').setView([51.505, -0.09], 13);
@@ -35,8 +48,12 @@ export class AppComponent {
     //     fillOpacity: 0.5,
     //     radius: 500
     // }).addTo(this.map);
-    console.log(this.cityInput.replace(/ /g, '+'))
-    this.getCityCoordinates();
+    //this.getCityCoordinates();
+  }
+
+  changed(text) {
+    console.log(text);
+    this.modelChanged.next(text);
   }
 
   getCityCoordinates() {
@@ -53,14 +70,46 @@ export class AppComponent {
         citySearch = city.long_name + ' ' + zip.long_name;
       console.log(citySearch);
       let loc_type = result.results[0].types[0].toLowerCase();
-      let zoom = loc_type == 'locality' ? 10 : loc_type == 'postal_code' ? 13 : 16;
+      let zoom = loc_type == 'locality' ? 9 : loc_type == 'postal_code' ? 13 : 16;
       this.map.setView([result.results[0].geometry.location.lat, result.results[0].geometry.location.lng], zoom);
-      // let circle = leaflet.circle([result.results[0].geometry.location.lat, result.results[0].geometry.location.lng], {
-      //     color: 'red',
-      //     fillColor: '#f03',
-      //     fillOpacity: 0.5,
-      //     radius: 3000
-      // }).addTo(this.map);
+      let radius = this.calculateRadius(result);
+      this.clearLayers();
+      let circle = leaflet.circle([result.results[0].geometry.location.lat, result.results[0].geometry.location.lng], {
+          color: '#6BB9F0',
+          fillColor: '#6BB9F0',
+          fillOpacity: 0.25,
+          radius: radius
+      }).addTo(this.map);
     });
+  }
+
+  calculateRadius(res) {
+    var R = 6371e3; // metres
+    var l1 = res.results[0].geometry.bounds.northeast.lat * (Math.PI / 180);
+    var l2 = res.results[0].geometry.bounds.southwest.lat * (Math.PI / 180);
+    var d1 = (res.results[0].geometry.bounds.southwest.lat-res.results[0].geometry.bounds.northeast.lat) * (Math.PI / 180);
+    var d2 = (res.results[0].geometry.bounds.southwest.lng-res.results[0].geometry.bounds.northeast.lng) * (Math.PI / 180);
+
+    var a = Math.sin(d1/2) * Math.sin(d1/2) +
+            Math.cos(l1) * Math.cos(l2) *
+            Math.sin(d2/2) * Math.sin(d2/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    var d = R * c;
+    console.log(d);
+    return d / 2;
+  }
+
+  clearLayers() {
+    for(var i in this.map._layers) {
+        if(this.map._layers[i]._path != undefined) {
+            try {
+                this.map.removeLayer(this.map._layers[i]);
+            }
+            catch(e) {
+                console.log("problem with " + e + this.map._layers[i]);
+            }
+        }
+    }
   }
 }

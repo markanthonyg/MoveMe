@@ -1,11 +1,11 @@
 .header-img {
-  background-image: url('../assets/blackandwhite.jpg');
+  background-image: url('../assets/img1.jpg');
   margin: auto;
   background-size:180px;
-  height:275px;
+  height:35vh;
   width: 100%;
   background-size: cover;
-  background-position: center center;
+  background-position: center;
 }
 .navbar {
   background-color: #1C2833 !important;
@@ -85,6 +85,6 @@ a.nav-link, a.navbar-brand {
 }
 .map {
   width: 100vw;
-  height: 50vh;
+  height: 55vh;
   max-height: none;
 }

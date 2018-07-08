@@ -19,7 +19,7 @@
       </li>
       <li>
         <div class="cx-col">
-          <input type="text" [(ngModel)]="cityInput" (keyup)="getCityCoordinates()" class="form-control input-md cx-input" placeholder="Find a city..." />
+          <input type="text" [(ngModel)]="cityInput" (ngModelChange)="changed($event)" class="form-control input-md cx-input" placeholder="Find a city..." />
         </div>
       </li>
     </ul>
